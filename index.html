@@ -813,8 +813,9 @@ function askForDifferentiator(baseName) {
       <div class="admin-overlay" id="diff-overlay">
         <div class="admin-panel">
           <h2>¡Ya hay un/a ${escapeHtml(baseName)}!</h2>
-          <p class="penalty-label" style="text-align:left;">Alguien ya se anotó con ese nombre y apellido. Agregá un número para diferenciarte (ej: los últimos 3 dígitos de tu teléfono, o tu DNI).</p>
-          <input type="text" id="diff-input" inputmode="numeric" placeholder="Ej: 123" maxlength="10" />
+          <p class="penalty-label" style="text-align:left;">Alguien ya se anotó con ese nombre y apellido. Agregá un número o carácter para diferenciarte.</p>
+          <p class="penalty-label" style="text-align:left; font-size:11.5px; color:#a9c4b4; margin-top:-4px; margin-bottom:14px; font-weight:400;">Si ya votaste antes, no vale volver a hacerlo con otro número. Un solo voto por persona.</p>
+          <input type="text" id="diff-input" placeholder="Ej: 123 o *" maxlength="10" />
           <button class="row-btn" id="diff-confirm">Confirmar</button>
           <button class="admin-close" id="diff-cancel">Cancelar</button>
         </div>
@@ -823,7 +824,7 @@ function askForDifferentiator(baseName) {
     const cleanup = (val) => { root.innerHTML = ''; resolve(val); };
     document.getElementById('diff-confirm').onclick = () => {
       const val = document.getElementById('diff-input').value.trim();
-      if (!val) { alert('Escribí al menos un número.'); return; }
+      if (!val) { alert('Escribí al menos un carácter.'); return; }
       cleanup(val);
     };
     document.getElementById('diff-cancel').onclick = () => cleanup(null);
