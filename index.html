@@ -33,30 +33,59 @@
     display: flex;
     align-items: flex-start;
     justify-content: center;
-    background:
-      radial-gradient(ellipse at 50% 0%, rgba(233,197,107,0.12), transparent 55%),
-      linear-gradient(180deg, var(--bg-1) 0%, var(--bg-deep) 100%);
-    background-attachment: fixed;
+    background: var(--bg-deep);
     overflow-x: hidden;
     position: relative;
   }
 
-  body::before {
+  /* Banderas gigantes de fondo, difuminadas */
+  body::before, body::after {
     content: '';
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    width: 45%;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.55;
+  }
+
+  body::before {
+    left: 0;
+    background:
+      linear-gradient(90deg, transparent 0%, var(--bg-deep) 100%),
+      linear-gradient(to bottom,
+        var(--arg-blue) 0% 33%,
+        #ffffff 33% 66%,
+        var(--arg-blue) 66% 100%);
+  }
+
+  body::after {
+    right: 0;
+    background:
+      linear-gradient(-90deg, transparent 0%, var(--bg-deep) 100%),
+      linear-gradient(to bottom,
+        var(--esp-red) 0% 25%,
+        var(--esp-gold) 25% 75%,
+        var(--esp-red) 75% 100%);
+  }
+
+  .stadium-overlay {
     position: fixed;
     inset: 0;
     background:
+      radial-gradient(ellipse 50% 90% at 50% 50%, rgba(5,19,10,0.85) 0%, rgba(5,19,10,0.3) 60%, transparent 100%),
       repeating-linear-gradient(90deg, transparent 0 78px, rgba(255,255,255,0.015) 78px 79px),
       repeating-linear-gradient(0deg, transparent 0 78px, rgba(255,255,255,0.015) 78px 79px);
     pointer-events: none;
-    z-index: 0;
+    z-index: 1;
   }
 
   .card {
     width: 100%;
     max-width: 540px;
     position: relative;
-    z-index: 1;
+    z-index: 2;
   }
 
   .halime-logo {
@@ -138,6 +167,7 @@
     margin: 0 0 32px;
     letter-spacing: 0.02em;
   }
+  .subtitle b { color: var(--gold); font-weight: 800; }
 
   .matchup {
     display: flex;
@@ -542,6 +572,7 @@
 </style>
 </head>
 <body>
+<div class="stadium-overlay"></div>
 
 <div class="card">
   <img src="halime-logo.png" alt="Halime Estética Médica" class="halime-logo" />
@@ -549,7 +580,7 @@
   <div class="trophy">🏆</div>
   <div class="eyebrow">Final · Mundial 2026</div>
   <h1>¿Cómo termina la final?</h1>
-  <p class="subtitle">Predecí el resultado exacto y participá del sorteo de Halime</p>
+  <p class="subtitle">Predecí el resultado exacto y ganate <b>30% de descuento</b> en tu sesión de Halime</p>
 
   <div class="matchup">
     <div class="team-slot">
@@ -582,7 +613,7 @@ const TABLE = 'predicciones';
 const MY_ENTRY_KEY = 'mundial2026-my-entry-supabase';
 const POLL_MS = 5000;
 
-let draft = { arg: 0, esp: 0 };
+let draft = { arg: 0, esp: 0, arg_pen: 0, esp_pen: 0 };
 let penWinner = null;
 let nameInput = '';
 let cachedEntries = [];
@@ -627,7 +658,7 @@ async function insertEntry(entry) {
     const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}`, {
       method: 'POST',
       headers: sbHeaders({ 'Prefer': 'return=representation' }),
-      body: JSON.stringify({ name: entry.name, arg: entry.arg, esp: entry.esp, pen: entry.pen }),
+      body: JSON.stringify({ name: entry.name, arg: entry.arg, esp: entry.esp, pen: entry.pen, arg_pen: entry.arg_pen, esp_pen: entry.esp_pen }),
     });
     if (!res.ok) throw new Error('insert failed');
     const data = await res.json();
@@ -668,13 +699,40 @@ function renderPredictor(myEntry) {
   const app = document.getElementById('app');
   const locked = !!myEntry;
 
-  const penaltyHtml = (locked ? myEntry.pen !== null && myEntry.pen !== undefined : isDraw()) ? `
+  const showPenaltyBox = locked ? (myEntry.pen !== null && myEntry.pen !== undefined) : isDraw();
+  const penScoreArg = locked ? (myEntry.arg_pen ?? 0) : draft.arg_pen;
+  const penScoreEsp = locked ? (myEntry.esp_pen ?? 0) : draft.esp_pen;
+  const activePenWinner = locked ? myEntry.pen : penWinner;
+
+  const penaltyHtml = showPenaltyBox ? `
     <div class="penalty-box">
       <p class="penalty-label">Empate en los 90' — ¿quién gana por penales?</p>
       <div class="penalty-options">
-        <button class="pen-btn arg ${(locked ? myEntry.pen : penWinner) === 'arg' ? 'selected' : ''}" id="pen-arg" ${locked ? 'disabled' : ''}>Argentina</button>
-        <button class="pen-btn esp ${(locked ? myEntry.pen : penWinner) === 'esp' ? 'selected' : ''}" id="pen-esp" ${locked ? 'disabled' : ''}>España</button>
+        <button class="pen-btn arg ${activePenWinner === 'arg' ? 'selected' : ''}" id="pen-arg" ${locked ? 'disabled' : ''}>Argentina</button>
+        <button class="pen-btn esp ${activePenWinner === 'esp' ? 'selected' : ''}" id="pen-esp" ${locked ? 'disabled' : ''}>España</button>
       </div>
+      ${activePenWinner ? `
+        <p class="penalty-label" style="margin-top:16px;">Resultado de los penales</p>
+        <div class="predictor" style="margin-bottom:0; padding:16px 10px;">
+          <div class="score-col arg">
+            <span class="team-label">Arg</span>
+            <div class="stepper">
+              <button id="pscore-arg-minus" ${locked ? 'disabled' : ''}>−</button>
+              <span class="score-num" id="pscore-arg-num" style="font-size:38px;">${penScoreArg}</span>
+              <button id="pscore-arg-plus" ${locked ? 'disabled' : ''}>+</button>
+            </div>
+          </div>
+          <span class="dash" style="font-size:28px;margin-top:14px;">–</span>
+          <div class="score-col esp">
+            <span class="team-label">Esp</span>
+            <div class="stepper">
+              <button id="pscore-esp-minus" ${locked ? 'disabled' : ''}>−</button>
+              <span class="score-num" id="pscore-esp-num" style="font-size:38px;">${penScoreEsp}</span>
+              <button id="pscore-esp-plus" ${locked ? 'disabled' : ''}>+</button>
+            </div>
+          </div>
+        </div>
+      ` : ''}
     </div>
   ` : '';
 
@@ -704,7 +762,7 @@ function renderPredictor(myEntry) {
     </div>
     ${penaltyHtml}
     ${locked ? '' : '<button class="submit-btn" id="submit-btn">Confirmar predicción</button>'}
-    ${locked ? `<p class="my-pick">Tu predicción: <span class="score-badge">Argentina ${myEntry.arg} – ${myEntry.esp} España${myEntry.pen ? ` (gana ${myEntry.pen === 'arg' ? 'Argentina' : 'España'} x penales)` : ''}</span></p>` : ''}
+    ${locked ? `<p class="my-pick">Tu predicción: <span class="score-badge">Argentina ${myEntry.arg} – ${myEntry.esp} España${myEntry.pen ? `<br>Penales: ${myEntry.arg_pen} – ${myEntry.esp_pen} (gana ${myEntry.pen === 'arg' ? 'Argentina' : 'España'})` : ''}</span></p>` : ''}
     <div class="leaderboard" id="leaderboard" style="display:none;"></div>
     <p class="vote-count" id="vote-count" style="display:none;"></p>
   `;
@@ -718,8 +776,17 @@ function renderPredictor(myEntry) {
     document.getElementById('submit-btn').onclick = handleSubmit;
     const penArgBtn = document.getElementById('pen-arg');
     const penEspBtn = document.getElementById('pen-esp');
-    if (penArgBtn) penArgBtn.onclick = () => { penWinner = 'arg'; renderPredictor(myEntry); };
-    if (penEspBtn) penEspBtn.onclick = () => { penWinner = 'esp'; renderPredictor(myEntry); };
+    if (penArgBtn) penArgBtn.onclick = () => { penWinner = 'arg'; if (draft.arg_pen <= draft.esp_pen) { draft.arg_pen = draft.esp_pen + 1; } renderPredictor(myEntry); };
+    if (penEspBtn) penEspBtn.onclick = () => { penWinner = 'esp'; if (draft.esp_pen <= draft.arg_pen) { draft.esp_pen = draft.arg_pen + 1; } renderPredictor(myEntry); };
+
+    const pArgMinus = document.getElementById('pscore-arg-minus');
+    const pArgPlus = document.getElementById('pscore-arg-plus');
+    const pEspMinus = document.getElementById('pscore-esp-minus');
+    const pEspPlus = document.getElementById('pscore-esp-plus');
+    if (pArgMinus) pArgMinus.onclick = () => { draft.arg_pen = Math.max(0, draft.arg_pen - 1); renderPredictor(myEntry); };
+    if (pArgPlus) pArgPlus.onclick = () => { draft.arg_pen = Math.min(15, draft.arg_pen + 1); renderPredictor(myEntry); };
+    if (pEspMinus) pEspMinus.onclick = () => { draft.esp_pen = Math.max(0, draft.esp_pen - 1); renderPredictor(myEntry); };
+    if (pEspPlus) pEspPlus.onclick = () => { draft.esp_pen = Math.min(15, draft.esp_pen + 1); renderPredictor(myEntry); };
   }
 }
 
@@ -777,6 +844,21 @@ async function handleSubmit() {
     alert('Elegí quién gana por penales.');
     return;
   }
+  if (isDraw()) {
+    // Validar marcador de penales
+    if (draft.arg_pen === draft.esp_pen) {
+      alert('En la tanda de penales tiene que haber un ganador. Ajustá el marcador.');
+      return;
+    }
+    if (penWinner === 'arg' && draft.arg_pen <= draft.esp_pen) {
+      alert('Elegiste que Argentina gana por penales, pero el marcador dice lo contrario. Revisalo.');
+      return;
+    }
+    if (penWinner === 'esp' && draft.esp_pen <= draft.arg_pen) {
+      alert('Elegiste que España gana por penales, pero el marcador dice lo contrario. Revisalo.');
+      return;
+    }
+  }
 
   const submitBtn = document.getElementById('submit-btn');
   if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Guardando...'; }
@@ -796,6 +878,8 @@ async function handleSubmit() {
     arg: draft.arg,
     esp: draft.esp,
     pen: isDraw() ? penWinner : null,
+    arg_pen: isDraw() ? draft.arg_pen : null,
+    esp_pen: isDraw() ? draft.esp_pen : null,
   });
 
   if (!inserted) {
@@ -854,7 +938,7 @@ async function init() {
   const [entries, myEntry] = await Promise.all([fetchEntries(), getMyEntry()]);
   cachedEntries = entries || [];
   if (myEntry) {
-    draft = { arg: myEntry.arg, esp: myEntry.esp };
+    draft = { arg: myEntry.arg, esp: myEntry.esp, arg_pen: myEntry.arg_pen || 0, esp_pen: myEntry.esp_pen || 0 };
     penWinner = myEntry.pen;
   }
   renderPredictor(myEntry);
