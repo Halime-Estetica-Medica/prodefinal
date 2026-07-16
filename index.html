@@ -5,19 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>¿Quién se queda con la Copa?</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@400;500;700;800&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Anton&family=Manrope:wght@400;500;700;800&display=swap');
 
   :root {
-    --bg: #1b120d;
-    --bg-2: #241811;
-    --gold: #c9a24e;
-    --rose: #d68b8b;
-    --arg-blue: #6ecff6;
-    --arg-white: #f5f2ec;
-    --esp-red: #d6273f;
-    --esp-gold: #f2c14e;
+    --bg-deep: #05130a;
+    --bg-1: #0b2417;
+    --bg-2: #123b25;
+    --gold: #e9c56b;
+    --gold-2: #f7d97e;
+    --arg-blue: #74acdf;
+    --arg-blue-2: #b7dbf3;
+    --arg-white: #ffffff;
+    --esp-red: #c60b1e;
+    --esp-gold: #ffc400;
     --text: #f5efe4;
-    --muted: #b8a996;
+    --muted: #a9c4b4;
   }
 
   * { box-sizing: border-box; }
@@ -25,70 +27,162 @@
   body {
     margin: 0;
     font-family: 'Manrope', sans-serif;
-    background: radial-gradient(ellipse at top, var(--bg-2), var(--bg) 65%);
     color: var(--text);
     min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     padding: 32px 16px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(233,197,107,0.12), transparent 55%),
+      linear-gradient(180deg, var(--bg-1) 0%, var(--bg-deep) 100%);
+    background-attachment: fixed;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      repeating-linear-gradient(90deg, transparent 0 78px, rgba(255,255,255,0.015) 78px 79px),
+      repeating-linear-gradient(0deg, transparent 0 78px, rgba(255,255,255,0.015) 78px 79px);
+    pointer-events: none;
+    z-index: 0;
   }
 
   .card {
     width: 100%;
-    max-width: 520px;
+    max-width: 540px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .halime-logo {
+    display: block;
+    width: 110px;
+    height: 110px;
+    margin: 0 auto 8px;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 16px rgba(233,197,107,0.35));
+  }
+
+  .halime-footer-logo {
+    display: block;
+    width: 42px;
+    height: 42px;
+    margin: 0 auto 10px;
+    border-radius: 50%;
+    object-fit: cover;
+    opacity: 0.85;
+  }
+
+  .halime-name {
+    font-family: 'Anton', sans-serif;
+    font-size: 14px;
+    letter-spacing: 0.25em;
+    color: var(--gold);
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 4px;
+  }
+
+  .trophy {
+    text-align: center;
+    font-size: 34px;
+    margin-bottom: 6px;
+    filter: drop-shadow(0 4px 12px rgba(233,197,107,0.35));
   }
 
   .eyebrow {
     text-align: center;
-    letter-spacing: 0.3em;
-    font-size: 11px;
+    letter-spacing: 0.35em;
+    font-size: 10.5px;
     text-transform: uppercase;
     color: var(--gold);
-    font-weight: 700;
-    margin-bottom: 10px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
   }
+  .eyebrow::before, .eyebrow::after {
+    content: '';
+    height: 1px;
+    width: 30px;
+    background: linear-gradient(90deg, transparent, var(--gold));
+  }
+  .eyebrow::after { background: linear-gradient(90deg, var(--gold), transparent); }
 
   h1 {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(38px, 9vw, 56px);
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(42px, 10vw, 64px);
     text-align: center;
-    letter-spacing: 0.02em;
-    margin: 0 0 6px;
-    line-height: 1;
-    background: linear-gradient(90deg, var(--arg-white), var(--gold) 60%, var(--esp-gold));
+    letter-spacing: 0.01em;
+    margin: 0 0 8px;
+    line-height: 0.95;
+    text-transform: uppercase;
+    background: linear-gradient(180deg, #ffffff 20%, var(--gold-2) 60%, var(--gold) 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+    text-shadow: 0 4px 30px rgba(233,197,107,0.15);
   }
 
   .subtitle {
     text-align: center;
     color: var(--muted);
-    font-size: 14px;
-    margin-bottom: 28px;
+    font-size: 13.5px;
+    margin: 0 0 32px;
+    letter-spacing: 0.02em;
   }
-
-  .subtitle b { color: var(--text); }
 
   .matchup {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 18px;
-    margin-bottom: 26px;
+    gap: 24px;
+    margin-bottom: 28px;
+  }
+
+  .team-slot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .team-slot .team-name {
+    font-family: 'Anton', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.12em;
+    color: var(--text);
+    text-transform: uppercase;
   }
 
   .flag {
-    width: 56px;
-    height: 40px;
-    border-radius: 5px;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+    width: 72px;
+    height: 50px;
+    border-radius: 6px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.06);
     flex-shrink: 0;
   }
 
   .flag.arg {
     background: linear-gradient(to bottom, var(--arg-blue) 0 33%, var(--arg-white) 33% 66%, var(--arg-blue) 66% 100%);
+    position: relative;
+  }
+  .flag.arg::after {
+    content: '\2600';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 14px;
+    color: #f6b73c;
+    line-height: 1;
   }
 
   .flag.esp {
@@ -96,45 +190,76 @@
   }
 
   .vs {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 22px;
-    color: var(--rose);
+    font-family: 'Anton', sans-serif;
+    font-size: 24px;
+    color: var(--gold);
     letter-spacing: 0.1em;
+    padding: 6px 14px;
+    border: 1px solid rgba(233,197,107,0.35);
+    border-radius: 999px;
+    background: rgba(233,197,107,0.06);
+    align-self: center;
+    margin-bottom: 26px;
   }
 
-  .options {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px;
-    margin-bottom: 24px;
+  .name-field { margin-bottom: 20px; }
+
+  .name-field label {
+    display: block;
+    font-family: 'Anton', sans-serif;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--gold);
+    margin-bottom: 10px;
+    text-align: center;
   }
+
+  .name-field input {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.04);
+    color: var(--text);
+    font-family: 'Manrope', sans-serif;
+    font-size: 16px;
+    text-align: center;
+    transition: border-color 0.2s ease, background 0.2s ease;
+  }
+  .name-field input:focus { outline: none; border-color: var(--gold); background: rgba(233,197,107,0.06); }
+  .name-field input:disabled { opacity: 0.7; }
 
   .predictor {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 20px;
+    gap: 12px;
     margin-bottom: 22px;
-    padding: 24px 12px;
-    border-radius: 16px;
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.08);
+    padding: 24px 14px;
+    border-radius: 18px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+    border: 1px solid rgba(233,197,107,0.15);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 12px 30px rgba(0,0,0,0.35);
   }
 
   .score-col {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
+    flex: 1;
   }
 
   .score-col .team-label {
+    font-family: 'Anton', sans-serif;
     font-size: 12px;
     text-transform: uppercase;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.15em;
     color: var(--muted);
-    font-weight: 700;
   }
+  .score-col.arg .team-label { color: var(--arg-blue-2); }
+  .score-col.esp .team-label { color: var(--esp-gold); }
 
   .stepper {
     display: flex;
@@ -143,138 +268,55 @@
   }
 
   .stepper button {
-    width: 34px;
-    height: 34px;
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
     border: 1px solid rgba(255,255,255,0.15);
-    background: rgba(255,255,255,0.05);
+    background: rgba(255,255,255,0.06);
     color: var(--text);
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 700;
     cursor: pointer;
     line-height: 1;
-    transition: background 0.15s ease, transform 0.1s ease;
+    transition: background 0.15s ease, transform 0.1s ease, border-color 0.15s ease;
   }
-  .stepper button:hover:not(:disabled) { background: rgba(255,255,255,0.14); }
-  .stepper button:active:not(:disabled) { transform: scale(0.92); }
+  .stepper button:hover:not(:disabled) { background: rgba(233,197,107,0.2); border-color: var(--gold); }
+  .stepper button:active:not(:disabled) { transform: scale(0.9); }
   .stepper button:disabled { opacity: 0.35; cursor: default; }
 
   .score-num {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 40px;
-    min-width: 40px;
+    font-family: 'Anton', sans-serif;
+    font-size: 56px;
+    min-width: 50px;
     text-align: center;
+    line-height: 1;
   }
-  .score-col.arg .score-num { color: var(--arg-blue); }
+  .score-col.arg .score-num { color: var(--arg-blue-2); }
   .score-col.esp .score-num { color: var(--esp-gold); }
 
   .dash {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 32px;
-    color: var(--muted);
-    align-self: center;
-    margin-top: 22px;
-  }
-
-  .submit-btn {
-    display: block;
-    width: 100%;
-    border: none;
-    border-radius: 12px;
-    padding: 15px;
-    background: linear-gradient(90deg, var(--arg-blue), var(--gold), var(--esp-red));
-    color: #1b120d;
-    font-weight: 800;
-    font-size: 15px;
-    letter-spacing: 0.02em;
-    cursor: pointer;
-    margin-bottom: 24px;
-    transition: transform 0.15s ease, opacity 0.15s ease;
-  }
-  .submit-btn:hover:not(:disabled) { transform: translateY(-2px); }
-  .submit-btn:disabled { opacity: 0.5; cursor: default; }
-
-  .my-pick {
-    text-align: center;
-    font-size: 13.5px;
+    font-family: 'Anton', sans-serif;
+    font-size: 42px;
     color: var(--gold);
-    font-weight: 700;
-    margin-bottom: 20px;
-  }
-  .my-pick .score-badge {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 20px;
-    letter-spacing: 0.05em;
-    color: var(--text);
-    margin-left: 6px;
-  }
-
-  .leaderboard {
-    margin-bottom: 6px;
-  }
-
-  .lb-title {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    color: var(--muted);
-    font-weight: 700;
-    margin-bottom: 12px;
-    text-align: center;
-  }
-
-  .lb-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 8px;
-  }
-
-  .lb-score {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 18px;
-    min-width: 52px;
-    text-align: right;
-    color: var(--text);
-  }
-
-  .lb-row.mine .lb-score { color: var(--gold); }
-
-  .lb-bar-wrap {
-    flex: 1;
-    height: 10px;
-    border-radius: 999px;
-    background: rgba(255,255,255,0.06);
-    overflow: hidden;
-  }
-
-  .lb-bar {
-    height: 100%;
-    border-radius: 999px;
-    background: linear-gradient(90deg, var(--arg-blue), var(--esp-gold));
-    transition: width 0.6s ease;
-  }
-
-  .lb-pct {
-    font-size: 12px;
-    color: var(--muted);
-    min-width: 34px;
+    align-self: center;
+    margin-top: 26px;
+    opacity: 0.6;
   }
 
   .penalty-box {
-    margin: -8px 0 20px;
-    padding: 16px;
-    border-radius: 12px;
-    background: rgba(201,162,78,0.08);
-    border: 1px dashed rgba(201,162,78,0.4);
+    margin: -8px 0 22px;
+    padding: 18px;
+    border-radius: 14px;
+    background: rgba(233,197,107,0.08);
+    border: 1px dashed rgba(233,197,107,0.45);
   }
 
   .penalty-label {
     text-align: center;
-    font-size: 12.5px;
+    font-size: 13px;
     color: var(--gold);
     font-weight: 700;
-    margin-bottom: 10px;
+    margin: 0 0 12px;
   }
 
   .penalty-options {
@@ -286,84 +328,167 @@
   .pen-btn {
     border: 2px solid rgba(255,255,255,0.12);
     border-radius: 10px;
-    padding: 10px 8px;
+    padding: 12px 8px;
     background: rgba(255,255,255,0.03);
     color: var(--text);
     font-family: 'Manrope', sans-serif;
     font-weight: 700;
     font-size: 13.5px;
     cursor: pointer;
-    transition: border-color 0.2s ease, background 0.2s ease;
+    transition: border-color 0.2s ease, background 0.2s ease, transform 0.1s ease;
   }
-
-  .pen-btn.arg.selected { border-color: var(--arg-blue); background: rgba(110,207,246,0.14); }
-  .pen-btn.esp.selected { border-color: var(--esp-red); background: rgba(214,39,63,0.14); }
+  .pen-btn:hover:not(:disabled) { transform: translateY(-1px); }
+  .pen-btn.arg.selected { border-color: var(--arg-blue); background: rgba(116,172,223,0.18); }
+  .pen-btn.esp.selected { border-color: var(--esp-red); background: rgba(198,11,30,0.18); }
   .pen-btn:disabled { cursor: default; opacity: 0.6; }
 
-  .name-field {
-    margin-bottom: 18px;
-  }
-
-  .name-field label {
+  .submit-btn {
     display: block;
-    font-size: 11.5px;
+    width: 100%;
+    border: none;
+    border-radius: 14px;
+    padding: 18px;
+    background: linear-gradient(90deg, var(--gold), var(--gold-2), var(--gold));
+    color: #0b1e12;
+    font-family: 'Anton', sans-serif;
+    font-size: 18px;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--muted);
+    cursor: pointer;
+    margin-bottom: 26px;
+    box-shadow: 0 8px 24px rgba(233,197,107,0.35), inset 0 1px 0 rgba(255,255,255,0.4);
+    transition: transform 0.15s ease, box-shadow 0.2s ease;
+  }
+  .submit-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(233,197,107,0.5), inset 0 1px 0 rgba(255,255,255,0.4); }
+  .submit-btn:disabled { opacity: 0.6; cursor: default; }
+
+  .my-pick {
+    text-align: center;
+    font-size: 14px;
+    color: var(--gold);
     font-weight: 700;
-    margin-bottom: 8px;
+    margin-bottom: 22px;
+    padding: 18px;
+    border-radius: 12px;
+    background: rgba(233,197,107,0.08);
+    border: 1px solid rgba(233,197,107,0.25);
+  }
+  .my-pick .score-badge {
+    display: block;
+    font-family: 'Anton', sans-serif;
+    font-size: 22px;
+    letter-spacing: 0.04em;
+    color: var(--text);
+    margin-top: 6px;
+    text-transform: uppercase;
+  }
+
+  .leaderboard { margin-bottom: 6px; }
+
+  .lb-title {
+    font-family: 'Anton', sans-serif;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    margin: 0 0 14px;
     text-align: center;
   }
 
-  .name-field input {
-    width: 100%;
-    padding: 12px 14px;
-    border-radius: 10px;
-    border: 1px solid rgba(255,255,255,0.15);
-    background: rgba(255,255,255,0.04);
-    color: var(--text);
-    font-family: 'Manrope', sans-serif;
-    font-size: 15px;
-    text-align: center;
+  .lb-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
   }
-  .name-field input:focus { outline: 2px solid var(--gold); border-color: transparent; }
-  .name-field input:disabled { opacity: 0.6; }
+
+  .lb-score {
+    font-family: 'Anton', sans-serif;
+    font-size: 20px;
+    min-width: 62px;
+    text-align: right;
+    color: var(--text);
+  }
+  .lb-row.mine .lb-score { color: var(--gold); }
+
+  .lb-bar-wrap {
+    flex: 1;
+    height: 12px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.06);
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .lb-bar {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--arg-blue), var(--gold), var(--esp-red));
+    transition: width 0.6s ease;
+    box-shadow: 0 0 12px rgba(233,197,107,0.35);
+  }
+
+  .lb-pct {
+    font-size: 12.5px;
+    color: var(--muted);
+    min-width: 38px;
+    font-weight: 700;
+  }
+
+  .vote-count {
+    text-align: center;
+    color: var(--muted);
+    font-size: 12.5px;
+    margin-top: 14px;
+  }
+
+  .footer {
+    margin-top: 32px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.8;
+    border-top: 1px solid rgba(233,197,107,0.15);
+    padding-top: 18px;
+    letter-spacing: 0.03em;
+  }
+  .footer b { color: var(--gold); font-family: 'Anton', sans-serif; font-size: 14px; letter-spacing: 0.08em; }
+
+  .loading { text-align: center; color: var(--muted); font-size: 13px; }
 
   .admin-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.65);
+    background: rgba(0,0,0,0.7);
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 20px;
-    z-index: 50;
+    z-index: 100;
   }
 
   .admin-panel {
-    background: var(--bg-2);
-    border: 1px solid rgba(255,255,255,0.1);
+    background: var(--bg-1);
+    border: 1px solid rgba(233,197,107,0.3);
     border-radius: 16px;
     padding: 24px;
     width: 100%;
-    max-width: 460px;
-    max-height: 85vh;
-    overflow-y: auto;
+    max-width: 420px;
   }
 
   .admin-panel h2 {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 26px;
-    letter-spacing: 0.02em;
+    font-family: 'Anton', sans-serif;
+    font-size: 22px;
+    letter-spacing: 0.05em;
     color: var(--gold);
-    margin: 0 0 16px;
+    margin: 0 0 14px;
     text-align: center;
+    text-transform: uppercase;
   }
 
-  .admin-panel input[type="password"],
   .admin-panel input[type="text"] {
     width: 100%;
-    padding: 11px 14px;
+    padding: 12px 14px;
     border-radius: 10px;
     border: 1px solid rgba(255,255,255,0.15);
     background: rgba(255,255,255,0.04);
@@ -373,13 +498,13 @@
     margin-bottom: 12px;
   }
 
-  .admin-panel .row-btn {
+  .row-btn {
     width: 100%;
     border: none;
     border-radius: 10px;
     padding: 12px;
     background: var(--gold);
-    color: #1b120d;
+    color: #0b1e12;
     font-weight: 800;
     font-size: 14px;
     cursor: pointer;
@@ -398,80 +523,44 @@
     font-size: 12px;
   }
 
-  .winners-box {
-    background: rgba(201,162,78,0.1);
-    border: 1px solid rgba(201,162,78,0.3);
-    border-radius: 10px;
-    padding: 12px 14px;
-    margin-bottom: 16px;
-  }
-  .winners-box .w-title { font-size: 12px; color: var(--gold); font-weight: 700; margin-bottom: 6px; }
-  .winners-box .w-name { font-size: 14px; margin-bottom: 2px; }
-
-  .entry-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 8px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-    font-size: 13px;
-  }
-  .entry-row .e-name { color: var(--text); font-weight: 600; }
-  .entry-row .e-pred { color: var(--muted); }
-
-  .penalty-toggle {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 12px;
-  }
-  .penalty-toggle button {
-    flex: 1;
-    padding: 9px;
-    border-radius: 8px;
-    border: 1px solid rgba(255,255,255,0.15);
-    background: rgba(255,255,255,0.04);
-    color: var(--text);
-    font-size: 13px;
-    cursor: pointer;
-  }
-  .penalty-toggle button.active { border-color: var(--gold); background: rgba(201,162,78,0.15); }
-
-  .vote-count {
-    text-align: center;
-    color: var(--muted);
-    font-size: 12.5px;
-    margin-top: 14px;
+  .confetti-piece {
+    position: fixed;
+    width: 10px;
+    height: 14px;
+    top: -20px;
+    z-index: 999;
+    pointer-events: none;
+    opacity: 0;
+    animation: confetti-fall linear forwards;
+    border-radius: 2px;
   }
 
-  .footer {
-    margin-top: 28px;
-    text-align: center;
-    font-size: 12px;
-    color: var(--muted);
-    line-height: 1.7;
-    border-top: 1px solid rgba(255,255,255,0.08);
-    padding-top: 16px;
-  }
-
-  .footer b { color: var(--gold); }
-
-  .loading {
-    text-align: center;
-    color: var(--muted);
-    font-size: 13px;
+  @keyframes confetti-fall {
+    0% { opacity: 1; transform: translateY(0) rotate(0deg); }
+    100% { opacity: 0.9; transform: translateY(110vh) rotate(720deg); }
   }
 </style>
 </head>
 <body>
 
 <div class="card">
+  <img src="halime-logo.png" alt="Halime Estética Médica" class="halime-logo" />
+  <div class="halime-name">Halime</div>
+  <div class="trophy">🏆</div>
   <div class="eyebrow">Final · Mundial 2026</div>
   <h1>¿Cómo termina la final?</h1>
-  <p class="subtitle">Predecí el resultado exacto y mirá en vivo qué marcador vota más la gente</p>
+  <p class="subtitle">Predecí el resultado exacto y participá del sorteo de Halime</p>
 
   <div class="matchup">
-    <div class="flag arg"></div>
+    <div class="team-slot">
+      <div class="flag arg"></div>
+      <span class="team-name">Argentina</span>
+    </div>
     <span class="vs">VS</span>
-    <div class="flag esp"></div>
+    <div class="team-slot">
+      <div class="flag esp"></div>
+      <span class="team-name">España</span>
+    </div>
   </div>
 
   <div id="app">
@@ -616,8 +705,8 @@ function renderPredictor(myEntry) {
     ${penaltyHtml}
     ${locked ? '' : '<button class="submit-btn" id="submit-btn">Confirmar predicción</button>'}
     ${locked ? `<p class="my-pick">Tu predicción: <span class="score-badge">Argentina ${myEntry.arg} – ${myEntry.esp} España${myEntry.pen ? ` (gana ${myEntry.pen === 'arg' ? 'Argentina' : 'España'} x penales)` : ''}</span></p>` : ''}
-    <div class="leaderboard" id="leaderboard"></div>
-    <p class="vote-count" id="vote-count"></p>
+    <div class="leaderboard" id="leaderboard" style="display:none;"></div>
+    <p class="vote-count" id="vote-count" style="display:none;"></p>
   `;
 
   if (!locked) {
@@ -640,41 +729,13 @@ function onScoreChange(myEntry) {
 }
 
 function renderLeaderboard(entries, myEntry) {
-  const counts = {};
-  entries.forEach(e => {
-    const key = scoreLabel(e);
-    counts[key] = (counts[key] || 0) + 1;
-  });
-  const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
   const total = entries.length;
-  const top = sorted.slice(0, 5);
-  const myKey = myEntry ? scoreLabel(myEntry) : null;
-
-  const lbEl = document.getElementById('leaderboard');
   const countEl = document.getElementById('vote-count');
-  if (!lbEl || !countEl) return;
-
-  if (!top.length) {
-    lbEl.innerHTML = '';
+  if (!countEl) return;
+  if (!total) {
     countEl.textContent = 'Todavía nadie predijo un resultado. ¡Sé el primero!';
     return;
   }
-
-  lbEl.innerHTML = `
-    <p class="lb-title">Predicciones más votadas</p>
-    ${top.map(([label, count]) => {
-      const pct = total ? Math.round((count / total) * 100) : 0;
-      const mine = label === myKey ? 'mine' : '';
-      return `
-        <div class="lb-row ${mine}">
-          <span class="lb-score">${label}</span>
-          <div class="lb-bar-wrap"><div class="lb-bar" style="width:${pct}%"></div></div>
-          <span class="lb-pct">${pct}%</span>
-        </div>
-      `;
-    }).join('')}
-  `;
-
   countEl.textContent = `${total} predicción${total === 1 ? '' : 'es'} en total`;
 }
 
@@ -747,6 +808,36 @@ async function handleSubmit() {
   cachedEntries = await fetchEntries() || cachedEntries;
   renderPredictor(inserted);
   renderLeaderboard(cachedEntries, inserted);
+
+  // Confeti según a quién le da ganar (o empate)
+  const winsArg = inserted.arg > inserted.esp || (inserted.arg === inserted.esp && inserted.pen === 'arg');
+  const winsEsp = inserted.esp > inserted.arg || (inserted.arg === inserted.esp && inserted.pen === 'esp');
+  if (winsArg) {
+    launchConfetti(['#74acdf', '#ffffff', '#f6b73c']); // celeste, blanco, sol
+  } else if (winsEsp) {
+    launchConfetti(['#c60b1e', '#ffc400']); // rojo y amarillo
+  } else {
+    launchConfetti(['#e9c56b', '#ffffff']); // fallback dorado
+  }
+}
+
+function launchConfetti(colors) {
+  const total = 90;
+  for (let i = 0; i < total; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.left = Math.random() * 100 + 'vw';
+    piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+    const duration = 2.5 + Math.random() * 2;
+    const delay = Math.random() * 0.6;
+    piece.style.animationDuration = duration + 's';
+    piece.style.animationDelay = delay + 's';
+    piece.style.width = (6 + Math.random() * 8) + 'px';
+    piece.style.height = (10 + Math.random() * 8) + 'px';
+    piece.style.transform = `rotate(${Math.random() * 360}deg)`;
+    document.body.appendChild(piece);
+    setTimeout(() => piece.remove(), (duration + delay) * 1000 + 200);
+  }
 }
 
 async function refreshLoop() {
