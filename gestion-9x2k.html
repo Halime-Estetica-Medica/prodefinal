@@ -223,7 +223,7 @@
 <body>
 <div class="wrap">
   <h1>Panel organizador</h1>
-  <p class="subtitle">Final del Mundial 2026 · solo para vos</p>
+  <p class="subtitle">Final del Mundial 2026</p>
   <div id="app"></div>
 </div>
 
@@ -323,52 +323,10 @@ function renderLogin() {
 
 function renderDashboard() {
   const app = document.getElementById('app');
-  const argWins = entries.filter(e => e.arg > e.esp || (e.arg === e.esp && e.pen === 'arg')).length;
-  const espWins = entries.filter(e => e.esp > e.arg || (e.arg === e.esp && e.pen === 'esp')).length;
-  const draws = entries.filter(e => e.arg === e.esp && !e.pen).length;
 
   app.innerHTML = `
     <div class="card">
-      <p class="summary-title">Resumen (${entries.length} predicciones) · se actualiza solo</p>
-      <p class="summary-line">🇦🇷 Argentina gana: ${argWins}</p>
-      <p class="summary-line">🇪🇸 España gana: ${espWins}</p>
-      ${draws ? `<p class="summary-line">Empate sin definir penales: ${draws}</p>` : ''}
-    </div>
-
-    <div class="card">
-      <p class="section-title">Buscar ganadores por resultado final</p>
-      <div class="predictor">
-        <div class="score-col">
-          <span class="team-label">Argentina</span>
-          <div class="stepper">
-            <button id="a-minus">−</button>
-            <span class="score-num" id="a-num">${filterArg}</span>
-            <button id="a-plus">+</button>
-          </div>
-        </div>
-        <span class="dash">–</span>
-        <div class="score-col">
-          <span class="team-label">España</span>
-          <div class="stepper">
-            <button id="e-minus">−</button>
-            <span class="score-num" id="e-num">${filterEsp}</span>
-            <button id="e-plus">+</button>
-          </div>
-        </div>
-      </div>
-      ${filterArg === filterEsp ? `
-        <div class="penalty-toggle">
-          <button id="pen-arg" class="${filterPen === 'arg' ? 'active' : ''}">Ganó Argentina x pen.</button>
-          <button id="pen-esp" class="${filterPen === 'esp' ? 'active' : ''}">Ganó España x pen.</button>
-        </div>
-      ` : ''}
-      <button class="row-btn" id="search-btn">Buscar ganadores</button>
-      <div id="winners"></div>
-    </div>
-
-    <div class="card">
-      <button class="row-btn blue" id="export-btn">⬇ Descargar todo (CSV)</button>
-      <p class="section-title">Todas las predicciones (${entries.length})</p>
+      <p class="section-title">Predicciones (${entries.length}) · se actualiza solo</p>
       <div id="all-list">
         ${entries.slice().sort((a,b) => a.name.localeCompare(b.name)).map(e => `
           <div class="entry-row">
@@ -379,36 +337,6 @@ function renderDashboard() {
       </div>
     </div>
   `;
-
-  document.getElementById('a-minus').onclick = () => { filterArg = Math.max(0, filterArg - 1); if (filterArg !== filterEsp) filterPen = null; renderDashboard(); };
-  document.getElementById('a-plus').onclick = () => { filterArg = Math.min(9, filterArg + 1); if (filterArg !== filterEsp) filterPen = null; renderDashboard(); };
-  document.getElementById('e-minus').onclick = () => { filterEsp = Math.max(0, filterEsp - 1); if (filterArg !== filterEsp) filterPen = null; renderDashboard(); };
-  document.getElementById('e-plus').onclick = () => { filterEsp = Math.min(9, filterEsp + 1); if (filterArg !== filterEsp) filterPen = null; renderDashboard(); };
-  const penArgBtn = document.getElementById('pen-arg');
-  const penEspBtn = document.getElementById('pen-esp');
-  if (penArgBtn) penArgBtn.onclick = () => { filterPen = 'arg'; renderDashboard(); };
-  if (penEspBtn) penEspBtn.onclick = () => { filterPen = 'esp'; renderDashboard(); };
-
-  document.getElementById('search-btn').onclick = () => {
-    const winners = entries.filter(e =>
-      e.arg === filterArg &&
-      e.esp === filterEsp &&
-      (filterArg !== filterEsp ? true : e.pen === filterPen)
-    );
-    const winEl = document.getElementById('winners');
-    if (!winners.length) {
-      winEl.innerHTML = `<div class="winners-box"><p class="w-title">Sin coincidencias</p><p class="w-name">Nadie acertó ese resultado exacto.</p></div>`;
-    } else {
-      winEl.innerHTML = `
-        <div class="winners-box">
-          <p class="w-title">🏆 ${winners.length} ganador${winners.length === 1 ? '' : 'es'}</p>
-          ${winners.map(w => `<p class="w-name">${escapeHtml(w.name)}</p>`).join('')}
-        </div>
-      `;
-    }
-  };
-
-  document.getElementById('export-btn').onclick = exportCsv;
 }
 
 async function loadAndRender() {
