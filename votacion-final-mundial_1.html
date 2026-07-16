@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>¿Quién se queda con la Copa?</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@400;500;700;800&display=swap');
+
+  :root {
+    --bg: #1b120d;
+    --bg-2: #241811;
+    --gold: #c9a24e;
+    --rose: #d68b8b;
+    --arg-blue: #6ecff6;
+    --arg-white: #f5f2ec;
+    --esp-red: #d6273f;
+    --esp-gold: #f2c14e;
+    --text: #f5efe4;
+    --muted: #b8a996;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: 'Manrope', sans-serif;
+    background: radial-gradient(ellipse at top, var(--bg-2), var(--bg) 65%);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 16px;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 520px;
+  }
+
+  .eyebrow {
+    text-align: center;
+    letter-spacing: 0.3em;
+    font-size: 11px;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(38px, 9vw, 56px);
+    text-align: center;
+    letter-spacing: 0.02em;
+    margin: 0 0 6px;
+    line-height: 1;
+    background: linear-gradient(90deg, var(--arg-white), var(--gold) 60%, var(--esp-gold));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .subtitle {
+    text-align: center;
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 28px;
+  }
+
+  .subtitle b { color: var(--text); }
+
+  .matchup {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    margin-bottom: 26px;
+  }
+
+  .flag {
+    width: 56px;
+    height: 40px;
+    border-radius: 5px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+    flex-shrink: 0;
+  }
+
+  .flag.arg {
+    background: linear-gradient(to bottom, var(--arg-blue) 0 33%, var(--arg-white) 33% 66%, var(--arg-blue) 66% 100%);
+  }
+
+  .flag.esp {
+    background: linear-gradient(to bottom, var(--esp-red) 0 25%, var(--esp-gold) 25% 75%, var(--esp-red) 75% 100%);
+  }
+
+  .vs {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    color: var(--rose);
+    letter-spacing: 0.1em;
+  }
+
+  .options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+
+  .predictor {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 22px;
+    padding: 24px 12px;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .score-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .score-col .team-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    font-weight: 700;
+  }
+
+  .stepper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .stepper button {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.05);
+    color: var(--text);
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    line-height: 1;
+    transition: background 0.15s ease, transform 0.1s ease;
+  }
+  .stepper button:hover:not(:disabled) { background: rgba(255,255,255,0.14); }
+  .stepper button:active:not(:disabled) { transform: scale(0.92); }
+  .stepper button:disabled { opacity: 0.35; cursor: default; }
+
+  .score-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 40px;
+    min-width: 40px;
+    text-align: center;
+  }
+  .score-col.arg .score-num { color: var(--arg-blue); }
+  .score-col.esp .score-num { color: var(--esp-gold); }
+
+  .dash {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    color: var(--muted);
+    align-self: center;
+    margin-top: 22px;
+  }
+
+  .submit-btn {
+    display: block;
+    width: 100%;
+    border: none;
+    border-radius: 12px;
+    padding: 15px;
+    background: linear-gradient(90deg, var(--arg-blue), var(--gold), var(--esp-red));
+    color: #1b120d;
+    font-weight: 800;
+    font-size: 15px;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    margin-bottom: 24px;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+  }
+  .submit-btn:hover:not(:disabled) { transform: translateY(-2px); }
+  .submit-btn:disabled { opacity: 0.5; cursor: default; }
+
+  .my-pick {
+    text-align: center;
+    font-size: 13.5px;
+    color: var(--gold);
+    font-weight: 700;
+    margin-bottom: 20px;
+  }
+  .my-pick .score-badge {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 0.05em;
+    color: var(--text);
+    margin-left: 6px;
+  }
+
+  .leaderboard {
+    margin-bottom: 6px;
+  }
+
+  .lb-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    font-weight: 700;
+    margin-bottom: 12px;
+    text-align: center;
+  }
+
+  .lb-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .lb-score {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    min-width: 52px;
+    text-align: right;
+    color: var(--text);
+  }
+
+  .lb-row.mine .lb-score { color: var(--gold); }
+
+  .lb-bar-wrap {
+    flex: 1;
+    height: 10px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.06);
+    overflow: hidden;
+  }
+
+  .lb-bar {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--arg-blue), var(--esp-gold));
+    transition: width 0.6s ease;
+  }
+
+  .lb-pct {
+    font-size: 12px;
+    color: var(--muted);
+    min-width: 34px;
+  }
+
+  .penalty-box {
+    margin: -8px 0 20px;
+    padding: 16px;
+    border-radius: 12px;
+    background: rgba(201,162,78,0.08);
+    border: 1px dashed rgba(201,162,78,0.4);
+  }
+
+  .penalty-label {
+    text-align: center;
+    font-size: 12.5px;
+    color: var(--gold);
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  .penalty-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .pen-btn {
+    border: 2px solid rgba(255,255,255,0.12);
+    border-radius: 10px;
+    padding: 10px 8px;
+    background: rgba(255,255,255,0.03);
+    color: var(--text);
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    font-size: 13.5px;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background 0.2s ease;
+  }
+
+  .pen-btn.arg.selected { border-color: var(--arg-blue); background: rgba(110,207,246,0.14); }
+  .pen-btn.esp.selected { border-color: var(--esp-red); background: rgba(214,39,63,0.14); }
+  .pen-btn:disabled { cursor: default; opacity: 0.6; }
+
+  .name-field {
+    margin-bottom: 18px;
+  }
+
+  .name-field label {
+    display: block;
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    font-weight: 700;
+    margin-bottom: 8px;
+    text-align: center;
+  }
+
+  .name-field input {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.04);
+    color: var(--text);
+    font-family: 'Manrope', sans-serif;
+    font-size: 15px;
+    text-align: center;
+  }
+  .name-field input:focus { outline: 2px solid var(--gold); border-color: transparent; }
+  .name-field input:disabled { opacity: 0.6; }
+
+  .admin-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.65);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 50;
+  }
+
+  .admin-panel {
+    background: var(--bg-2);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 24px;
+    width: 100%;
+    max-width: 460px;
+    max-height: 85vh;
+    overflow-y: auto;
+  }
+
+  .admin-panel h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    letter-spacing: 0.02em;
+    color: var(--gold);
+    margin: 0 0 16px;
+    text-align: center;
+  }
+
+  .admin-panel input[type="password"],
+  .admin-panel input[type="text"] {
+    width: 100%;
+    padding: 11px 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.04);
+    color: var(--text);
+    font-family: 'Manrope', sans-serif;
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+
+  .admin-panel .row-btn {
+    width: 100%;
+    border: none;
+    border-radius: 10px;
+    padding: 12px;
+    background: var(--gold);
+    color: #1b120d;
+    font-weight: 800;
+    font-size: 14px;
+    cursor: pointer;
+    margin-bottom: 14px;
+  }
+
+  .admin-close {
+    display: block;
+    margin: 0 auto 14px;
+    background: none;
+    border: 1px solid rgba(255,255,255,0.15);
+    color: var(--muted);
+    border-radius: 8px;
+    padding: 6px 14px;
+    cursor: pointer;
+    font-size: 12px;
+  }
+
+  .winners-box {
+    background: rgba(201,162,78,0.1);
+    border: 1px solid rgba(201,162,78,0.3);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 16px;
+  }
+  .winners-box .w-title { font-size: 12px; color: var(--gold); font-weight: 700; margin-bottom: 6px; }
+  .winners-box .w-name { font-size: 14px; margin-bottom: 2px; }
+
+  .entry-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    font-size: 13px;
+  }
+  .entry-row .e-name { color: var(--text); font-weight: 600; }
+  .entry-row .e-pred { color: var(--muted); }
+
+  .penalty-toggle {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .penalty-toggle button {
+    flex: 1;
+    padding: 9px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.04);
+    color: var(--text);
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .penalty-toggle button.active { border-color: var(--gold); background: rgba(201,162,78,0.15); }
+
+  .vote-count {
+    text-align: center;
+    color: var(--muted);
+    font-size: 12.5px;
+    margin-top: 14px;
+  }
+
+  .footer {
+    margin-top: 28px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.7;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding-top: 16px;
+  }
+
+  .footer b { color: var(--gold); }
+
+  .loading {
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="eyebrow">Final · Mundial 2026</div>
+  <h1>¿Cómo termina la final?</h1>
+  <p class="subtitle">Predecí el resultado exacto y mirá en vivo qué marcador vota más la gente</p>
+
+  <div class="matchup">
+    <div class="flag arg"></div>
+    <span class="vs">VS</span>
+    <div class="flag esp"></div>
+  </div>
+
+  <div id="app">
+    <p class="loading">Cargando votos...</p>
+  </div>
+
+  <div id="diff-root"></div>
+
+  <div class="footer">
+    <div><b>Domingo 19 de julio · 16:00 hs (ARG)</b></div>
+    <div>MetLife Stadium, East Rutherford</div>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://jrardafurwqzyvpcoqdu.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_usYkBm5afi4z8DYiX3f31Q_fR7WtzdH';
+const TABLE = 'predicciones';
+const MY_ENTRY_KEY = 'mundial2026-my-entry-supabase';
+const POLL_MS = 5000;
+
+let draft = { arg: 0, esp: 0 };
+let penWinner = null;
+let nameInput = '';
+let cachedEntries = [];
+
+function sbHeaders(extra) {
+  return Object.assign({
+    'apikey': SUPABASE_KEY,
+    'Authorization': `Bearer ${SUPABASE_KEY}`,
+    'Content-Type': 'application/json',
+  }, extra || {});
+}
+
+async function fetchEntries() {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}?select=*&order=created_at.asc`, {
+      headers: sbHeaders(),
+    });
+    if (!res.ok) throw new Error('fetch failed');
+    return await res.json();
+  } catch (e) {
+    console.error('Error al leer predicciones', e);
+    return null;
+  }
+}
+
+async function nameExists(name) {
+  const normalized = name.trim();
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}?select=id&name=eq.${encodeURIComponent(normalized)}`, {
+      headers: sbHeaders(),
+    });
+    if (!res.ok) return false;
+    const data = await res.json();
+    return data.length > 0;
+  } catch (e) {
+    return false;
+  }
+}
+
+async function insertEntry(entry) {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}`, {
+      method: 'POST',
+      headers: sbHeaders({ 'Prefer': 'return=representation' }),
+      body: JSON.stringify({ name: entry.name, arg: entry.arg, esp: entry.esp, pen: entry.pen }),
+    });
+    if (!res.ok) throw new Error('insert failed');
+    const data = await res.json();
+    return data[0];
+  } catch (e) {
+    console.error('Error al guardar la predicción', e);
+    return null;
+  }
+}
+
+async function getMyEntry() {
+  try {
+    const res = await window.storage.get(MY_ENTRY_KEY, false);
+    return res ? JSON.parse(res.value) : null;
+  } catch (e) {
+    return null;
+  }
+}
+
+async function setMyEntry(entry) {
+  try {
+    await window.storage.set(MY_ENTRY_KEY, JSON.stringify(entry), false);
+  } catch (e) {
+    console.error('No se pudo guardar tu elección localmente', e);
+  }
+}
+
+function scoreLabel(e) {
+  const base = `${e.arg}–${e.esp}`;
+  return e.pen ? `${base} (pen. ${e.pen === 'arg' ? 'Arg' : 'Esp'})` : base;
+}
+
+function isDraw() {
+  return draft.arg === draft.esp;
+}
+
+function renderPredictor(myEntry) {
+  const app = document.getElementById('app');
+  const locked = !!myEntry;
+
+  const penaltyHtml = (locked ? myEntry.pen !== null && myEntry.pen !== undefined : isDraw()) ? `
+    <div class="penalty-box">
+      <p class="penalty-label">Empate en los 90' — ¿quién gana por penales?</p>
+      <div class="penalty-options">
+        <button class="pen-btn arg ${(locked ? myEntry.pen : penWinner) === 'arg' ? 'selected' : ''}" id="pen-arg" ${locked ? 'disabled' : ''}>Argentina</button>
+        <button class="pen-btn esp ${(locked ? myEntry.pen : penWinner) === 'esp' ? 'selected' : ''}" id="pen-esp" ${locked ? 'disabled' : ''}>España</button>
+      </div>
+    </div>
+  ` : '';
+
+  app.innerHTML = `
+    <div class="name-field">
+      <label>Nombre y apellido</label>
+      <input type="text" id="name-input" placeholder="Ej: Nico Fernández" maxlength="60" value="${locked ? myEntry.name : nameInput}" ${locked ? 'disabled' : ''} />
+    </div>
+    <div class="predictor">
+      <div class="score-col arg">
+        <span class="team-label">Argentina</span>
+        <div class="stepper">
+          <button id="arg-minus" ${locked ? 'disabled' : ''}>−</button>
+          <span class="score-num" id="arg-num">${draft.arg}</span>
+          <button id="arg-plus" ${locked ? 'disabled' : ''}>+</button>
+        </div>
+      </div>
+      <span class="dash">–</span>
+      <div class="score-col esp">
+        <span class="team-label">España</span>
+        <div class="stepper">
+          <button id="esp-minus" ${locked ? 'disabled' : ''}>−</button>
+          <span class="score-num" id="esp-num">${draft.esp}</span>
+          <button id="esp-plus" ${locked ? 'disabled' : ''}>+</button>
+        </div>
+      </div>
+    </div>
+    ${penaltyHtml}
+    ${locked ? '' : '<button class="submit-btn" id="submit-btn">Confirmar predicción</button>'}
+    ${locked ? `<p class="my-pick">Tu predicción: <span class="score-badge">Argentina ${myEntry.arg} – ${myEntry.esp} España${myEntry.pen ? ` (gana ${myEntry.pen === 'arg' ? 'Argentina' : 'España'} x penales)` : ''}</span></p>` : ''}
+    <div class="leaderboard" id="leaderboard"></div>
+    <p class="vote-count" id="vote-count"></p>
+  `;
+
+  if (!locked) {
+    document.getElementById('name-input').oninput = (e) => { nameInput = e.target.value; };
+    document.getElementById('arg-minus').onclick = () => { draft.arg = Math.max(0, draft.arg - 1); onScoreChange(myEntry); };
+    document.getElementById('arg-plus').onclick = () => { draft.arg = Math.min(9, draft.arg + 1); onScoreChange(myEntry); };
+    document.getElementById('esp-minus').onclick = () => { draft.esp = Math.max(0, draft.esp - 1); onScoreChange(myEntry); };
+    document.getElementById('esp-plus').onclick = () => { draft.esp = Math.min(9, draft.esp + 1); onScoreChange(myEntry); };
+    document.getElementById('submit-btn').onclick = handleSubmit;
+    const penArgBtn = document.getElementById('pen-arg');
+    const penEspBtn = document.getElementById('pen-esp');
+    if (penArgBtn) penArgBtn.onclick = () => { penWinner = 'arg'; renderPredictor(myEntry); };
+    if (penEspBtn) penEspBtn.onclick = () => { penWinner = 'esp'; renderPredictor(myEntry); };
+  }
+}
+
+function onScoreChange(myEntry) {
+  if (!isDraw()) penWinner = null;
+  renderPredictor(myEntry);
+}
+
+function renderLeaderboard(entries, myEntry) {
+  const counts = {};
+  entries.forEach(e => {
+    const key = scoreLabel(e);
+    counts[key] = (counts[key] || 0) + 1;
+  });
+  const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+  const total = entries.length;
+  const top = sorted.slice(0, 5);
+  const myKey = myEntry ? scoreLabel(myEntry) : null;
+
+  const lbEl = document.getElementById('leaderboard');
+  const countEl = document.getElementById('vote-count');
+  if (!lbEl || !countEl) return;
+
+  if (!top.length) {
+    lbEl.innerHTML = '';
+    countEl.textContent = 'Todavía nadie predijo un resultado. ¡Sé el primero!';
+    return;
+  }
+
+  lbEl.innerHTML = `
+    <p class="lb-title">Predicciones más votadas</p>
+    ${top.map(([label, count]) => {
+      const pct = total ? Math.round((count / total) * 100) : 0;
+      const mine = label === myKey ? 'mine' : '';
+      return `
+        <div class="lb-row ${mine}">
+          <span class="lb-score">${label}</span>
+          <div class="lb-bar-wrap"><div class="lb-bar" style="width:${pct}%"></div></div>
+          <span class="lb-pct">${pct}%</span>
+        </div>
+      `;
+    }).join('')}
+  `;
+
+  countEl.textContent = `${total} predicción${total === 1 ? '' : 'es'} en total`;
+}
+
+function askForDifferentiator(baseName) {
+  return new Promise((resolve) => {
+    const root = document.getElementById('diff-root');
+    root.innerHTML = `
+      <div class="admin-overlay" id="diff-overlay">
+        <div class="admin-panel">
+          <h2>¡Ya hay un/a ${escapeHtml(baseName)}!</h2>
+          <p class="penalty-label" style="text-align:left;">Alguien ya se anotó con ese nombre y apellido. Agregá un número para diferenciarte (ej: los últimos 3 dígitos de tu teléfono, o tu DNI).</p>
+          <input type="text" id="diff-input" inputmode="numeric" placeholder="Ej: 123" maxlength="10" />
+          <button class="row-btn" id="diff-confirm">Confirmar</button>
+          <button class="admin-close" id="diff-cancel">Cancelar</button>
+        </div>
+      </div>
+    `;
+    const cleanup = (val) => { root.innerHTML = ''; resolve(val); };
+    document.getElementById('diff-confirm').onclick = () => {
+      const val = document.getElementById('diff-input').value.trim();
+      if (!val) { alert('Escribí al menos un número.'); return; }
+      cleanup(val);
+    };
+    document.getElementById('diff-cancel').onclick = () => cleanup(null);
+    document.getElementById('diff-overlay').addEventListener('click', (ev) => {
+      if (ev.target.id === 'diff-overlay') cleanup(null);
+    });
+  });
+}
+
+async function handleSubmit() {
+  const rawName = (nameInput || '').trim().replace(/\s+/g, ' ');
+  const words = rawName.split(' ').filter(Boolean);
+  if (words.length < 2) {
+    alert('Poné tu nombre y apellido para poder participar.');
+    return;
+  }
+  if (isDraw() && !penWinner) {
+    alert('Elegí quién gana por penales.');
+    return;
+  }
+
+  const submitBtn = document.getElementById('submit-btn');
+  if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Guardando...'; }
+
+  let finalName = rawName;
+  while (await nameExists(finalName)) {
+    const diff = await askForDifferentiator(rawName);
+    if (diff === null) {
+      if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Confirmar predicción'; }
+      return;
+    }
+    finalName = `${rawName} (${diff})`;
+  }
+
+  const inserted = await insertEntry({
+    name: finalName,
+    arg: draft.arg,
+    esp: draft.esp,
+    pen: isDraw() ? penWinner : null,
+  });
+
+  if (!inserted) {
+    alert('Hubo un problema guardando tu predicción. Probá de nuevo en un momento.');
+    if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Confirmar predicción'; }
+    return;
+  }
+
+  await setMyEntry(inserted);
+  cachedEntries = await fetchEntries() || cachedEntries;
+  renderPredictor(inserted);
+  renderLeaderboard(cachedEntries, inserted);
+}
+
+async function refreshLoop() {
+  const entries = await fetchEntries();
+  if (entries) {
+    cachedEntries = entries;
+    const myEntry = await getMyEntry();
+    renderLeaderboard(cachedEntries, myEntry);
+  }
+  setTimeout(refreshLoop, POLL_MS);
+}
+
+async function init() {
+  const [entries, myEntry] = await Promise.all([fetchEntries(), getMyEntry()]);
+  cachedEntries = entries || [];
+  if (myEntry) {
+    draft = { arg: myEntry.arg, esp: myEntry.esp };
+    penWinner = myEntry.pen;
+  }
+  renderPredictor(myEntry);
+  renderLeaderboard(cachedEntries, myEntry);
+  setTimeout(refreshLoop, POLL_MS);
+}
+
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+init();
+</script>
+
+</body>
+</html>
