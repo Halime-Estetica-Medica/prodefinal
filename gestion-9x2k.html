@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel organizador · Final Mundial 2026</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@400;500;700;800&display=swap');
+
+  :root {
+    --bg: #1b120d;
+    --bg-2: #241811;
+    --gold: #c9a24e;
+    --rose: #d68b8b;
+    --arg-blue: #6ecff6;
+    --esp-red: #d6273f;
+    --esp-gold: #f2c14e;
+    --text: #f5efe4;
+    --muted: #b8a996;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: 'Manrope', sans-serif;
+    background: radial-gradient(ellipse at top, var(--bg-2), var(--bg) 65%);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 32px 16px;
+  }
+
+  .wrap {
+    max-width: 560px;
+    margin: 0 auto;
+  }
+
+  h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 30px;
+    letter-spacing: 0.02em;
+    color: var(--gold);
+    text-align: center;
+    margin: 0 0 4px;
+  }
+
+  .subtitle {
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 28px;
+  }
+
+  .card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+
+  input[type="password"], input[type="text"] {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.04);
+    color: var(--text);
+    font-family: 'Manrope', sans-serif;
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+
+  .row-btn {
+    display: block;
+    width: 100%;
+    border: none;
+    border-radius: 10px;
+    padding: 13px;
+    background: var(--gold);
+    color: #1b120d;
+    font-weight: 800;
+    font-size: 14px;
+    cursor: pointer;
+    margin-bottom: 12px;
+  }
+
+  .row-btn.blue { background: var(--arg-blue); }
+
+  .lock-box {
+    text-align: center;
+  }
+
+  .lock-box p {
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 16px;
+  }
+
+  .summary-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  .summary-line {
+    font-size: 15px;
+    margin-bottom: 4px;
+  }
+
+  .section-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    font-weight: 700;
+    margin-bottom: 14px;
+  }
+
+  .predictor {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 14px;
+  }
+
+  .score-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .score-col .team-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    font-weight: 700;
+  }
+
+  .stepper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .stepper button {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.05);
+    color: var(--text);
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .stepper button:hover { background: rgba(255,255,255,0.14); }
+
+  .score-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    min-width: 34px;
+    text-align: center;
+    color: var(--gold);
+  }
+
+  .dash {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    color: var(--muted);
+  }
+
+  .penalty-toggle {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .penalty-toggle button {
+    flex: 1;
+    padding: 9px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.04);
+    color: var(--text);
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .penalty-toggle button.active { border-color: var(--gold); background: rgba(201,162,78,0.15); }
+
+  .winners-box {
+    background: rgba(201,162,78,0.1);
+    border: 1px solid rgba(201,162,78,0.3);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-top: 12px;
+  }
+  .winners-box .w-title { font-size: 12px; color: var(--gold); font-weight: 700; margin-bottom: 6px; }
+  .winners-box .w-name { font-size: 14px; margin-bottom: 2px; }
+
+  .entry-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 9px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    font-size: 13px;
+  }
+  .entry-row .e-name { color: var(--text); font-weight: 600; }
+  .entry-row .e-pred { color: var(--muted); text-align: right; }
+
+  .status {
+    text-align: center;
+    color: var(--muted);
+    font-size: 12.5px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Panel organizador</h1>
+  <p class="subtitle">Final del Mundial 2026 · solo para vos</p>
+  <div id="app"></div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://jrardafurwqzyvpcoqdu.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_usYkBm5afi4z8DYiX3f31Q_fR7WtzdH';
+const TABLE = 'predicciones';
+const ADMIN_CODE = 'halime2026';
+const POLL_MS = 5000;
+
+let unlocked = false;
+let entries = [];
+let filterArg = 0;
+let filterEsp = 0;
+let filterPen = null;
+
+function sbHeaders() {
+  return {
+    'apikey': SUPABASE_KEY,
+    'Authorization': `Bearer ${SUPABASE_KEY}`,
+    'Content-Type': 'application/json',
+  };
+}
+
+async function fetchEntries() {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE}?select=*&order=created_at.asc`, {
+      headers: sbHeaders(),
+    });
+    if (!res.ok) throw new Error('fetch failed');
+    return await res.json();
+  } catch (e) {
+    console.error('Error al leer predicciones', e);
+    return null;
+  }
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function scoreLabel(e) {
+  const base = `${e.arg}–${e.esp}`;
+  return e.pen ? `${base} (pen. ${e.pen === 'arg' ? 'Arg' : 'Esp'})` : base;
+}
+
+function formatTs(value) {
+  if (!value) return '';
+  const d = new Date(value);
+  return d.toLocaleString('es-AR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+}
+
+function exportCsv() {
+  const header = 'Nombre y apellido,Argentina,España,Penales,Fecha y hora\n';
+  const rows = entries.map(e => {
+    const pen = e.pen ? (e.pen === 'arg' ? 'Gana Argentina' : 'Gana España') : '';
+    const name = `"${e.name.replace(/"/g, '""')}"`;
+    return `${name},${e.arg},${e.esp},${pen},"${formatTs(e.created_at)}"`;
+  }).join('\n');
+  const csv = header + rows;
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'predicciones-final-mundial.csv';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function renderLogin() {
+  const app = document.getElementById('app');
+  app.innerHTML = `
+    <div class="card lock-box">
+      <p>Ingresá la clave para ver las predicciones.</p>
+      <input type="password" id="pass-input" placeholder="Clave de acceso" />
+      <button class="row-btn" id="enter-btn">Entrar</button>
+    </div>
+  `;
+  document.getElementById('enter-btn').onclick = () => {
+    const val = document.getElementById('pass-input').value;
+    if (val === ADMIN_CODE) {
+      unlocked = true;
+      loadAndRender();
+      startPolling();
+    } else {
+      alert('Clave incorrecta.');
+    }
+  };
+  document.getElementById('pass-input').addEventListener('keydown', (ev) => {
+    if (ev.key === 'Enter') document.getElementById('enter-btn').click();
+  });
+}
+
+function renderDashboard() {
+  const app = document.getElementById('app');
+  const argWins = entries.filter(e => e.arg > e.esp || (e.arg === e.esp && e.pen === 'arg')).length;
+  const espWins = entries.filter(e => e.esp > e.arg || (e.arg === e.esp && e.pen === 'esp')).length;
+  const draws = entries.filter(e => e.arg === e.esp && !e.pen).length;
+
+  app.innerHTML = `
+    <div class="card">
+      <p class="summary-title">Resumen (${entries.length} predicciones) · se actualiza solo</p>
+      <p class="summary-line">🇦🇷 Argentina gana: ${argWins}</p>
+      <p class="summary-line">🇪🇸 España gana: ${espWins}</p>
+      ${draws ? `<p class="summary-line">Empate sin definir penales: ${draws}</p>` : ''}
+    </div>
+
+    <div class="card">
+      <p class="section-title">Buscar ganadores por resultado final</p>
+      <div class="predictor">
+        <div class="score-col">
+          <span class="team-label">Argentina</span>
+          <div class="stepper">
+            <button id="a-minus">−</button>
+            <span class="score-num" id="a-num">${filterArg}</span>
+            <button id="a-plus">+</button>
+          </div>
+        </div>
+        <span class="dash">–</span>
+        <div class="score-col">
+          <span class="team-label">España</span>
+          <div class="stepper">
+            <button id="e-minus">−</button>
+            <span class="score-num" id="e-num">${filterEsp}</span>
+            <button id="e-plus">+</button>
+          </div>
+        </div>
+      </div>
+      ${filterArg === filterEsp ? `
+        <div class="penalty-toggle">
+          <button id="pen-arg" class="${filterPen === 'arg' ? 'active' : ''}">Ganó Argentina x pen.</button>
+          <button id="pen-esp" class="${filterPen === 'esp' ? 'active' : ''}">Ganó España x pen.</button>
+        </div>
+      ` : ''}
+      <button class="row-btn" id="search-btn">Buscar ganadores</button>
+      <div id="winners"></div>
+    </div>
+
+    <div class="card">
+      <button class="row-btn blue" id="export-btn">⬇ Descargar todo (CSV)</button>
+      <p class="section-title">Todas las predicciones (${entries.length})</p>
+      <div id="all-list">
+        ${entries.slice().sort((a,b) => a.name.localeCompare(b.name)).map(e => `
+          <div class="entry-row">
+            <span class="e-name">${escapeHtml(e.name)}</span>
+            <span class="e-pred">${scoreLabel(e)}<br>${formatTs(e.created_at)}</span>
+          </div>
+        `).join('') || '<p class="status">Todavía no hay predicciones.</p>'}
+      </div>
+    </div>
+  `;
+
+  document.getElementById('a-minus').onclick = () => { filterArg = Math.max(0, filterArg - 1); if (filterArg !== filterEsp) filterPen = null; renderDashboard(); };
+  document.getElementById('a-plus').onclick = () => { filterArg = Math.min(9, filterArg + 1); if (filterArg !== filterEsp) filterPen = null; renderDashboard(); };
+  document.getElementById('e-minus').onclick = () => { filterEsp = Math.max(0, filterEsp - 1); if (filterArg !== filterEsp) filterPen = null; renderDashboard(); };
+  document.getElementById('e-plus').onclick = () => { filterEsp = Math.min(9, filterEsp + 1); if (filterArg !== filterEsp) filterPen = null; renderDashboard(); };
+  const penArgBtn = document.getElementById('pen-arg');
+  const penEspBtn = document.getElementById('pen-esp');
+  if (penArgBtn) penArgBtn.onclick = () => { filterPen = 'arg'; renderDashboard(); };
+  if (penEspBtn) penEspBtn.onclick = () => { filterPen = 'esp'; renderDashboard(); };
+
+  document.getElementById('search-btn').onclick = () => {
+    const winners = entries.filter(e =>
+      e.arg === filterArg &&
+      e.esp === filterEsp &&
+      (filterArg !== filterEsp ? true : e.pen === filterPen)
+    );
+    const winEl = document.getElementById('winners');
+    if (!winners.length) {
+      winEl.innerHTML = `<div class="winners-box"><p class="w-title">Sin coincidencias</p><p class="w-name">Nadie acertó ese resultado exacto.</p></div>`;
+    } else {
+      winEl.innerHTML = `
+        <div class="winners-box">
+          <p class="w-title">🏆 ${winners.length} ganador${winners.length === 1 ? '' : 'es'}</p>
+          ${winners.map(w => `<p class="w-name">${escapeHtml(w.name)}</p>`).join('')}
+        </div>
+      `;
+    }
+  };
+
+  document.getElementById('export-btn').onclick = exportCsv;
+}
+
+async function loadAndRender() {
+  const fresh = await fetchEntries();
+  if (fresh) entries = fresh;
+  renderDashboard();
+}
+
+function startPolling() {
+  setInterval(() => { if (unlocked) loadAndRender(); }, POLL_MS);
+}
+
+renderLogin();
+</script>
+</body>
+</html>
